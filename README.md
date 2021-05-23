@@ -4,7 +4,7 @@ Integration of cheap-di into React via React.context
 ## How to use
 
 There is simple logger.
-`loger.ts`
+`logger.ts`
 ```ts
 export abstract class Logger {
   abstract debug(message: string): void;
@@ -87,4 +87,4 @@ const ComponentB = () => {
 };
 ```
 
-You can see more examples in `cheap-di/src/container.test.ts`
+You can see more examples in `cheap-di-react/src/poc/components.tsx`
