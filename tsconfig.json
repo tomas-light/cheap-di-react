@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "jsx": "react-jsx",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "noErrorTruncation": true,
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "strict": true,
+    "sourceMap": true,
+    "target": "es6"
+  },
+  "include": ["src"],
+  "exclude": [
+    "node_modules",
+    "src/poc",
+    "src/**/*.test.ts"
+  ]
+}

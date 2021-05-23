@@ -1,0 +1,41 @@
+{
+  "name": "cheap-di-react",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest src"
+  },
+  "devDependencies": {
+    "@types/jest": "26.0.23",
+    "@types/react": "17.0.6",
+    "jest": "26.6.3",
+    "ts-jest": "26.5.6",
+    "tslib": "2.2.0",
+    "typescript": "4.2.4"
+  },
+  "peerDependencies": {
+    "cheap-di": ">= 2.0.0",
+    "react": ">= 16.14.0"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TomasLight/cheap-di-react.git"
+  },
+  "author": "TomasLight",
+  "license": "MIT",
+  "homepage": "https://github.com/TomasLight/cheap-di-react#readme",
+  "keywords": [
+    "dependency",
+    "injection",
+    "dependency injection",
+    "di",
+    "cheap di",
+    "instance type"
+  ]
+}
