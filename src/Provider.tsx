@@ -1,4 +1,4 @@
-import { FC, useContext, useLayoutEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import {
   ContainerImpl,
   DependencyRegistrator,
@@ -17,29 +17,30 @@ const Provider: FC<ProviderProps> = props => {
   } = props;
 
   const parentContainer = useContext(Context);
-  // const [container, setContainer] = useState<ContainerImpl>(() => new ContainerImpl());
-  const [container] = useState<ContainerImpl>(() => new ContainerImpl(parentContainer));
-
-  /*useLayoutEffect(() => {
-    if (!parentContainer) {
-      return;
+  const [container, setContainer] = useState<ContainerImpl>(() => {
+    const _container = new ContainerImpl();
+    if (dependencies) {
+      dependencies.forEach(callback => {
+        callback(_container);
+      });
     }
+    return _container;
+  });
 
-    const childContainer = new ContainerImpl(parentContainer);
-    dependencies.forEach(callback => {
-      callback(childContainer);
-    });
+  useEffect(() => {
+    if (parentContainer) {
+      const _container = new ContainerImpl(parentContainer);
+      setContainer(_container);
+    }
+  }, [parentContainer]);
 
-    setContainer(childContainer);
-  }, [parentContainer]);*/
-
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (dependencies) {
       dependencies.forEach(callback => {
         callback(container);
       });
     }
-  }, [dependencies]);
+  }, [container, dependencies]);
 
   return (
     <Context.Provider value={container}>
