@@ -37,7 +37,7 @@ const RootComponent = () => {
   return (
     <>
       <Provider
-        // will update dependencies on props changes (each render in this example)
+        // will update dependencies on each render
         dependencies={[
           dr => dr.registerType(ConsoleLogger).as(Logger),
         ]}
@@ -56,7 +56,7 @@ const RootComponent = () => {
 
       {/* shortcut for <Provider dependencies={[ dr => dr.registerType(ConsoleLogger) ]}> ... </Provider> */}
       <SelfProvider
-        // will update dependencies on props changes (each render in this example)
+        // will update dependencies on each render
         dependencies={[ConsoleLogger]}
       >
         <ComponentB/>
