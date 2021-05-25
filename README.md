@@ -19,6 +19,12 @@ export class ConsoleLogger extends Logger {
     console.log(`${this.prefix}: ${message}`);
   }
 }
+
+export class AnotherConsoleLogger extends Logger {
+  debug(message: string) {
+    console.log(message);
+  }
+}
 ```
 
 Use it in react
@@ -39,7 +45,7 @@ const RootComponent = () => {
       <Provider
         // will update dependencies on props changes (each render in this example)
         dependencies={[
-          dr => dr.registerType(ConsoleLogger).as(Logger),
+          dr => dr.registerType(ConsoleLogger).as(Logger).with('my message'),
         ]}
       >
         <ComponentA/>
@@ -48,7 +54,7 @@ const RootComponent = () => {
       <OneTimeProvider
         // will use initial dependecies (it uses useMemo under hood)
         dependencies={[
-          dr => dr.registerType(ConsoleLogger).as(Logger),
+          dr => dr.registerType(ConsoleLogger).as(Logger).with('my message'),
         ]}
       >
         <ComponentA/>
@@ -57,14 +63,14 @@ const RootComponent = () => {
       {/* shortcut for <Provider dependencies={[ dr => dr.registerType(ConsoleLogger) ]}> ... </Provider> */}
       <SelfProvider
         // will update dependencies on props changes (each render in this example)
-        dependencies={[ConsoleLogger]}
+        dependencies={[AnotherConsoleLogger]}
       >
         <ComponentB/>
       </SelfProvider>
 
       <SelfOneTimeProvider
         // will use initial dependecies (it uses useMemo under hood)
-        dependencies={[ConsoleLogger]}
+        dependencies={[AnotherConsoleLogger]}
       >
         <ComponentB/>
       </SelfOneTimeProvider>
@@ -80,7 +86,7 @@ const ComponentA = () => {
 };
 
 const ComponentB = () => {
-  const logger = use(ConsoleLogger); // because we registered it as self
+  const logger = use(AnotherConsoleLogger); // because we registered it as self
   logger.debug('bla-bla-bla');
 
   return 'my layout';
