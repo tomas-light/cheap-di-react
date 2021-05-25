@@ -35,3 +35,4 @@ const SelfProvider: FC<SelfProviderProps> = props => {
 
 
 export { SelfProvider };
+export type { SelfProviderProps };

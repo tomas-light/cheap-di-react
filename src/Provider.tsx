@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState, memo } from 'react';
 import {
   ContainerImpl,
   DependencyRegistrator,
@@ -17,30 +17,17 @@ const Provider: FC<ProviderProps> = props => {
   } = props;
 
   const parentContainer = useContext(Context);
-  const [container, setContainer] = useState<ContainerImpl>(() => {
-    const _container = new ContainerImpl();
-    if (dependencies) {
-      dependencies.forEach(callback => {
-        callback(_container);
-      });
-    }
-    return _container;
-  });
+  const [container, setContainer] = useState<ContainerImpl>(() => new ContainerImpl(parentContainer));
 
   useEffect(() => {
-    if (parentContainer) {
-      const _container = new ContainerImpl(parentContainer);
-      setContainer(_container);
+    if (container.sameParent(parentContainer)) {
+      return;
     }
+
+    setContainer(new ContainerImpl(parentContainer));
   }, [parentContainer]);
 
-  useEffect(() => {
-    if (dependencies) {
-      dependencies.forEach(callback => {
-        callback(container);
-      });
-    }
-  }, [container, dependencies]);
+  dependencies?.forEach(callback => callback(container));
 
   return (
     <Context.Provider value={container}>
@@ -49,7 +36,7 @@ const Provider: FC<ProviderProps> = props => {
   );
 };
 
-
-export { Provider };
+const memoizedComponent = memo(Provider) as FC<ProviderProps>;
+export { memoizedComponent as Provider };
 export type { ProviderProps };
 
