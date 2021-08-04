@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import { ImplementationType } from 'cheap-di/src';
+import { ImplementationType } from 'cheap-di';
 
 import { SelfProvider } from './SelfProvider';
 

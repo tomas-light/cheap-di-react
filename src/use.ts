@@ -1,9 +1,12 @@
-import { useContext } from 'react';
+import { createContext, useContext } from 'react';
 import {
   Constructor,
-  AbstractConstructor,
+  AbstractConstructor
 } from 'cheap-di';
 import { Context } from './Context';
+import { SingletonImplementation } from './SingletonImplementation';
+
+const mockContext = createContext('');
 
 function use<TInstance>(type: Constructor<TInstance> | AbstractConstructor<TInstance>, ...args: any[]): TInstance {
   const container = useContext(Context);
@@ -15,6 +18,9 @@ function use<TInstance>(type: Constructor<TInstance> | AbstractConstructor<TInst
   if (!implementation) {
     throw new Error(`Type (${type}) is not registered in cheap-di-react`);
   }
+
+  const constructor = (implementation as Object).constructor as SingletonImplementation;
+  useContext(constructor?.__singleton && constructor.__reactContext ? constructor.__reactContext : mockContext);
 
   return implementation;
 }

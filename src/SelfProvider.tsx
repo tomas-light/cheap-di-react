@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { DependencyRegistrator, ImplementationType } from 'cheap-di/src';
+import { DependencyRegistrator, ImplementationType } from 'cheap-di';
 
 import { Provider } from './Provider';
 

@@ -93,4 +93,51 @@ const ComponentB = () => {
 };
 ```
 
+If you want to use React.Context dependency (with refreshing dependency consumers), 
+for `@singleton` service, you should add SingletonStateProvider under your dependency Provider
+
+```tsx
+import { SelfOneTimeProvider, SingletonStateProvider, use } from 'cheap-di-react';
+import { singleton } from 'cheap-di/dist/singleton';
+
+@singleton()
+class Consumer {
+  data: string[] = ['initial'];
+
+  async loadData() {
+    this.data = await Promise.resolve(['some']);
+  }
+}
+
+const RootComponent = () => {
+  return (
+    <SelfOneTimeProvider dependencies={[Consumer]}>
+      <SingletonStateProvider>
+        <ComponentB/>
+      </SingletonStateProvider>
+    </SelfOneTimeProvider>
+  );
+};
+
+const ComponentB = () => {
+  const consumer = use(Consumer);
+
+  useEffect(() => {
+    (async () => {
+      await consumer.loadData();
+    })();
+  }, []);
+
+  return (
+    <div>
+      {consumer.data.map(text => (
+        <span key={text} style={{ color: 'blue' }}>
+        {text}
+      </span>
+      ))}
+    </div>
+  );
+};
+```
+
 You can see more examples in `cheap-di-react/src/poc/components.tsx`
