@@ -1,10 +1,11 @@
 import { createContext, useContext } from 'react';
 import {
   Constructor,
-  AbstractConstructor
+  AbstractConstructor,
+  singletonSymbol,
 } from 'cheap-di';
 import { Context } from './Context';
-import { SingletonImplementation } from './SingletonImplementation';
+import { SingletonImplementation, reactContextSymbol } from './SingletonImplementation';
 
 const mockContext = createContext('');
 
@@ -20,7 +21,11 @@ function use<TInstance>(type: Constructor<TInstance> | AbstractConstructor<TInst
   }
 
   const constructor = (implementation as Object).constructor as SingletonImplementation;
-  useContext(constructor?.__singleton && constructor.__reactContext ? constructor.__reactContext : mockContext);
+  useContext(
+    constructor && constructor[singletonSymbol] && constructor[reactContextSymbol]
+      ? constructor[reactContextSymbol]
+      : mockContext
+  );
 
   return implementation;
 }

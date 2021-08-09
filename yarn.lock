@@ -979,10 +979,10 @@ char-regex@^1.0.2:
   resolved "https://registry.yarnpkg.com/char-regex/-/char-regex-1.0.2.tgz#d744358226217f981ed58f479b1d6bcc29545dcf"
   integrity sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==
 
-cheap-di@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/cheap-di/-/cheap-di-2.1.0.tgz#f72bf3eb9694cee1c39dc88fc2dce14856e0d138"
-  integrity sha512-ECNTlEIQ72qQqP8b2k1wHHZu3nm5x+64cw3kASWAvK37Qya30Uz/wcr14FRqU/RpCIJRcUZ7RXqJpplCt3NSFQ==
+cheap-di@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/cheap-di/-/cheap-di-2.2.0.tgz#1dcdd18584d57710d542bd5a813d1bf3e7277522"
+  integrity sha512-I9Y70h5DnVCNU9T07UCar65D8E44rbI+LUsTka0iTWurIVJe2KGAzEci8Zcsdu/zW/QqEgUrgZfN15dL38Ao6Q==
 
 ci-info@^2.0.0:
   version "2.0.0"

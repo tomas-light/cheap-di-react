@@ -1,4 +1,4 @@
-import { SingletonImplementation } from './SingletonImplementation';
+import { SingletonImplementation, updateContextSymbol } from './SingletonImplementation';
 
 function reconfigureObject(instance: Object | any) {
   const newConfiguration = Object.keys(instance).reduce((config, property) => {
@@ -19,8 +19,8 @@ function reconfigureObject(instance: Object | any) {
         instance[`_${property}`] = value;
 
         const constructor = instance.constructor as SingletonImplementation;
-        if (constructor && constructor.__updateContext) {
-          constructor.__updateContext();
+        if (constructor && constructor[updateContextSymbol]) {
+          constructor[updateContextSymbol]();
         }
       }
     };

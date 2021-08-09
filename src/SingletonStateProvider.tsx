@@ -1,7 +1,14 @@
 import { createContext, FC, useContext, useEffect, useRef, useState } from 'react';
-import { RegistrationType, ImplementationType, DependencyResolver } from 'cheap-di';
+import { RegistrationType, ImplementationType, DependencyResolver, singletonSymbol } from 'cheap-di';
 import { Context } from './Context';
-import { SingletonImplementation } from './SingletonImplementation';
+import {
+  keySymbol,
+  valueSymbol,
+  updateContextSymbol,
+  configuredSymbol,
+  reactContextSymbol,
+  SingletonImplementation,
+} from './SingletonImplementation';
 import { reconfigureObject } from './reconfigureObject';
 
 type InternalContainer = DependencyResolver & {
@@ -18,30 +25,30 @@ const SingletonStateProvider: FC = ({ children }) => {
     container.dependencies.forEach((impl, reg) => {
       const instance = container.resolve(reg);
       const constructor = (instance as Object).constructor as SingletonImplementation;
-      if (!constructor?.__singleton) {
+      if (!constructor || !constructor[singletonSymbol]) {
         return;
       }
 
       const time = new Date().getTime().toString();
-      constructor.__key = time;
-      constructor.__value = time;
+      constructor[keySymbol] = time;
+      constructor[valueSymbol] = time;
 
-      constructor.__updateContext = () => {
-        constructor.__value = new Date().getTime().toString();
+      constructor[updateContextSymbol] = () => {
+        constructor[valueSymbol] = new Date().getTime().toString();
         rerender({});
       };
 
-      if (!constructor.__configured) {
+      if (!constructor[configuredSymbol]) {
         reconfigureObject(instance);
-        constructor.__configured = true;
+        constructor[configuredSymbol] = true;
       }
 
-      constructor.__reactContext = createContext('');
+      constructor[reactContextSymbol] = createContext('');
       constructors.push(constructor);
     });
 
     return constructors;
-  }
+  };
 
   const ref = useRef({ firstRender: true });
   const [singletonConstructors, setSingletonConstructors] = useState<SingletonImplementation[]>(
@@ -59,12 +66,13 @@ const SingletonStateProvider: FC = ({ children }) => {
   }, [container.dependencies]);
 
   const tree = singletonConstructors.reduce((Tree, constructor) => {
+    const context = constructor[reactContextSymbol];
     return (
-      <constructor.__reactContext.Provider key={constructor.__key} value={constructor.__value}>
+      <context.Provider key={constructor[keySymbol]} value={constructor[valueSymbol]}>
         {Tree}
-      </constructor.__reactContext.Provider>
+      </context.Provider>
     );
-  }, <>{children}</>)
+  }, <>{children}</>);
 
   return tree;
 };

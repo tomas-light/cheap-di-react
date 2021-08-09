@@ -98,7 +98,7 @@ for `@singleton` service, you should add SingletonStateProvider under your depen
 
 ```tsx
 import { SelfOneTimeProvider, SingletonStateProvider, use } from 'cheap-di-react';
-import { singleton } from 'cheap-di/dist/singleton';
+import { singleton } from 'cheap-di';
 
 @singleton()
 class Consumer {
