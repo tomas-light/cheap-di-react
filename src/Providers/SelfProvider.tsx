@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { DependencyRegistrator, ImplementationType } from 'cheap-di';
 
-import { Provider } from './Provider';
+import { Provider, ProviderProps } from './Provider';
 
 const mapper =
   (type: ImplementationType<Object>) =>
@@ -9,7 +9,7 @@ const mapper =
       container.registerType(type) as any as void
 ;
 
-interface SelfProviderProps {
+interface SelfProviderProps extends Omit<ProviderProps, 'dependencies'> {
   dependencies: ImplementationType<Object>[];
 }
 
@@ -17,6 +17,7 @@ const SelfProvider: FC<SelfProviderProps> = props => {
   const {
     dependencies,
     children,
+    ...rest
   } = props;
 
   const [registrationFunctions, setRegistrationFunctions] = useState(() => dependencies.map(mapper));
@@ -27,7 +28,7 @@ const SelfProvider: FC<SelfProviderProps> = props => {
   }, [dependencies]);
 
   return (
-    <Provider dependencies={registrationFunctions}>
+    <Provider dependencies={registrationFunctions} {...rest}>
       {children}
     </Provider>
   );

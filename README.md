@@ -93,15 +93,28 @@ const ComponentB = () => {
 };
 ```
 
-If you want to use React.Context dependency (with refreshing dependency consumers), 
-for `@singleton` service, you should add SingletonStateProvider under your dependency Provider
+If you mark your service as `@stateful` (or `@singleton`), Provider will create instance of the service and configures
+it fields (with Object.defineProperties), those fields changes (<b>reassign</b>) will trigger `Provider` rerender throw 
+`React.Context`, and service consumers will receive field update.
+
+Difference between `@singleton` and `@stateful` that for `@singleton` there will be created only one instance for entire 
+Provider tree, and for `@stateful` there will be created different instance per each Provider that register this type.
 
 ```tsx
-import { SelfOneTimeProvider, SingletonStateProvider, use } from 'cheap-di-react';
-import { singleton } from 'cheap-di';
+import { SelfOneTimeProvider, use } from 'cheap-di-react';
+import { singleton, stateful } from 'cheap-di';
 
-@singleton()
-class Consumer {
+@singleton
+class MySingleton {
+  data: string[] = ['initial'];
+
+  async loadData() {
+    this.data = await Promise.resolve(['some']);
+  }
+}
+
+@stateful
+class MyStateful {
   data: string[] = ['initial'];
 
   async loadData() {
@@ -111,26 +124,24 @@ class Consumer {
 
 const RootComponent = () => {
   return (
-    <SelfOneTimeProvider dependencies={[Consumer]}>
-      <SingletonStateProvider>
-        <ComponentB/>
-      </SingletonStateProvider>
+    <SelfOneTimeProvider dependencies={[MySingleton]}>
+      <Component/>
     </SelfOneTimeProvider>
   );
 };
 
-const ComponentB = () => {
-  const consumer = use(Consumer);
+const Component = () => {
+  const mySingleton = use(MySingleton);
 
   useEffect(() => {
     (async () => {
-      await consumer.loadData();
+      await mySingleton.loadData();
     })();
   }, []);
 
   return (
     <div>
-      {consumer.data.map(text => (
+      {mySingleton.data.map(text => (
         <span key={text} style={{ color: 'blue' }}>
         {text}
       </span>
@@ -139,5 +150,3 @@ const ComponentB = () => {
   );
 };
 ```
-
-You can see more examples in `cheap-di-react/src/poc/components.tsx`

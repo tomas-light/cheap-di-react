@@ -1,14 +1,15 @@
-import { SingletonImplementation, updateContextSymbol } from './SingletonImplementation';
+import { StatefulImplementation, updateContextSymbol } from '../StatefulImplementation';
+import { InternalLogger } from './InternalLogger';
 
-function reconfigureObject(instance: Object | any) {
+function reconfigureObject(instance: Object | any, logger: InternalLogger) {
   const newConfiguration = Object.keys(instance).reduce((config, property) => {
-
     config[`_${property}`] = {
       value: instance[property],
       writable: true,
       configurable: false,
       enumerable: false,
     };
+
     config[property] = {
       configurable: false,
       enumerable: true,
@@ -18,9 +19,13 @@ function reconfigureObject(instance: Object | any) {
       set(value) {
         instance[`_${property}`] = value;
 
-        const constructor = instance.constructor as SingletonImplementation;
-        if (constructor && constructor[updateContextSymbol]) {
-          constructor[updateContextSymbol]();
+        const statefulInstance = instance as StatefulImplementation;
+        if (statefulInstance[updateContextSymbol]) {
+          statefulInstance[updateContextSymbol]();
+
+          if (logger) {
+            logger.log('CHANGE:', 'instance', instance, 'property', property);
+          }
         }
       }
     };
