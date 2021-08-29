@@ -1,11 +1,11 @@
-import { stateful, isSingleton } from './stateful';
+import { stateful, isStateful } from './stateful';
 
 test('set singleton', () => {
   @stateful
   class MyClass {
   }
 
-  expect(isSingleton(MyClass)).toEqual(true);
+  expect(isStateful(MyClass)).toEqual(true);
 });
 
 test('singleton is not inherited', () => {
@@ -16,6 +16,6 @@ test('singleton is not inherited', () => {
   class MyClass2 extends MyClass {
   }
 
-  expect(isSingleton(MyClass)).toEqual(true);
-  expect(isSingleton(MyClass2)).toEqual(false);
+  expect(isStateful(MyClass)).toEqual(true);
+  expect(isStateful(MyClass2)).toEqual(false);
 });

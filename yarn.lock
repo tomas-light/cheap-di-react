@@ -1119,10 +1119,12 @@ char-regex@^1.0.2:
   resolved "https://registry.yarnpkg.com/char-regex/-/char-regex-1.0.2.tgz#d744358226217f981ed58f479b1d6bcc29545dcf"
   integrity sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==
 
-cheap-di@2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/cheap-di/-/cheap-di-2.3.0.tgz#410d9068e2a80860a2ff10cbdeebdd8fc6711afe"
-  integrity sha512-RPGUROSIyW4PYj4Mc+8H0WSJKLXwDusLBk7OMlFP8K3cN+jzL6svdJo9aDhIgQWQyCfIv0JbgxPxRp1Tahy+3g==
+cheap-di@3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/cheap-di/-/cheap-di-3.2.1.tgz#0df33f8a3bd117b0303d205e604151c364044339"
+  integrity sha512-hSST3KIzAVO6Awb+INgKFGOMmlONQOOan/U94pt7nIWZT1zc1lhIZptGTfI1YMjMAP/QWYhbIilP7eYMtAUe4Q==
+  dependencies:
+    reflect-metadata "0.1.13"
 
 ci-info@^2.0.0:
   version "2.0.0"
@@ -3132,6 +3134,11 @@ redent@^3.0.0:
     indent-string "^4.0.0"
     strip-indent "^3.0.0"
 
+reflect-metadata@0.1.13:
+  version "0.1.13"
+  resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.13.tgz#67ae3ca57c972a2aa1642b10fe363fe32d49dc08"
+  integrity sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==
+
 regenerator-runtime@^0.13.4:
   version "0.13.9"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.9.tgz#8925742a98ffd90814988d7566ad30ca3b263b52"
@@ -3760,10 +3767,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@4.2.4:
-  version "4.2.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.4.tgz#8610b59747de028fda898a8aef0e103f156d0961"
-  integrity sha512-V+evlYHZnQkaz8TRBuxTA92yZBPotr5H+WhQ7bD3hZUndx5tGOa1fuCgeSjxAzM1RiN5IzvadIXTVefuuwZCRg==
+typescript@4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.2.tgz#6d618640d430e3569a1dfb44f7d7e600ced3ee86"
+  integrity sha512-gzP+t5W4hdy4c+68bfcv0t400HVJMMd2+H9B7gae1nQlBzCqvrXX+6GL/b3GAgyTH966pzrZ70/fRjwAtZksSQ==
 
 union-value@^1.0.0:
   version "1.0.1"

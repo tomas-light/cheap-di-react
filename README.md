@@ -100,21 +100,53 @@ it fields (with Object.defineProperties), those fields changes (<b>reassign</b>)
 Difference between `@singleton` and `@stateful` that for `@singleton` there will be created only one instance for entire 
 Provider tree, and for `@stateful` there will be created different instance per each Provider that register this type.
 
+`stateful`
 ```tsx
-import { SelfOneTimeProvider, use } from 'cheap-di-react';
-import { singleton, stateful } from 'cheap-di';
-
-@singleton
-class MySingleton {
-  data: string[] = ['initial'];
-
-  async loadData() {
-    this.data = await Promise.resolve(['some']);
-  }
-}
+import { SelfOneTimeProvider, use, stateful } from 'cheap-di-react';
 
 @stateful
 class MyStateful {
+  message: string = 'initial';
+}
+
+const RootComponent = () => {
+  return (
+    <SelfOneTimeProvider dependencies={[MyStateful]}>
+      <LoadComponent message="level 1"/>
+      <ReadComponent/>
+
+      <SelfOneTimeProvider dependencies={[MyStateful]}>
+        <LoadComponent message="level 2"/>
+        <ReadComponent/>
+      </SelfOneTimeProvider>
+    </SelfOneTimeProvider>
+  );
+};
+
+const LoadComponent = ({ message }: { message: string }) => {
+  const myStateful = use(MyStateful);
+  return (
+    <button onClick={() => { myStateful.message = message; }}/>
+  );
+};
+
+const ReadComponent = () => {
+  const myStateful = use(MyStateful);
+  return (
+    <span>
+      {myStateful.message}
+    </span>
+  );
+};
+```
+
+`singleton`
+```tsx
+import { singleton } from 'cheap-di';
+import { SelfOneTimeProvider, use } from 'cheap-di-react';
+
+@singleton
+class MySingleton {
   data: string[] = ['initial'];
 
   async loadData() {
@@ -150,3 +182,54 @@ const Component = () => {
   );
 };
 ```
+
+You can configure your services with more classic-way - when your class know nothing about how and where it will be
+used. 
+
+`stateful`
+```tsx
+import { OneTimeProvider, use } from 'cheap-di-react';
+
+class MyStateful {
+  message: string = 'initial';
+}
+
+const RootComponent = () => {
+  return (
+    <OneTimeProvider dependencies={[ dr => dr.registerType(MyStateful) ]}>
+      <LoadComponent message="level 1"/>
+      <ReadComponent/>
+
+      <OneTimeProvider dependencies={[ dr => dr.registerType(MyStateful) ]}>
+        <LoadComponent message="level 2"/>
+        <ReadComponent/>
+      </OneTimeProvider>
+    </OneTimeProvider>
+  );
+};
+```
+
+`singleton`
+```tsx
+import { OneTimeProvider, use } from 'cheap-di-react';
+
+class MySingleton {
+  data: string[] = ['initial'];
+
+  async loadData() {
+    this.data = await Promise.resolve(['some']);
+  }
+}
+
+const RootComponent = () => {
+  return (
+    <OneTimeProvider dependencies={[ dr => dr.registerType(MySingleton).asSingleton() ]}>
+      <Component/>
+    </OneTimeProvider>
+  );
+};
+```
+
+But remember, if you want to use auto resolving your dependencies with typescript reflection, you need
+`"emitDecoratorMetadata": true,` in `tsconfig.ts` and any class-decorator for your service-class (read more in 
+`cheap-di` README.md)

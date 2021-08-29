@@ -1,1 +1,1 @@
-export * from './stateful';
+export { stateful, isStateful, statefulSymbol, StatefulImplementation } from './stateful';

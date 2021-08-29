@@ -1,16 +1,32 @@
 import { ReactContainer } from './ReactContainer';
 import { dependencies, singleton } from 'cheap-di';
 
-test('singletones', () => {
-  @singleton
-  class Service {
-  }
+const metadata = <T>(constructor: T): T => constructor;
 
-  const container = new ReactContainer();
-  container.registerType(Service);
-  const entity1 = container.resolve(Service);
-  const entity2 = container.resolve(Service);
-  expect(entity1).toBe(entity2);
+describe('singletons', () => {
+  test('with decorator', () => {
+    @singleton
+    class Service {
+    }
+
+    const container = new ReactContainer();
+    container.registerType(Service);
+    const entity1 = container.resolve(Service);
+    const entity2 = container.resolve(Service);
+    expect(entity1).toBe(entity2);
+  });
+
+  test('with decorator', () => {
+    @metadata
+    class Service {
+    }
+
+    const container = new ReactContainer();
+    container.registerType(Service).asSingleton();
+    const entity1 = container.resolve(Service);
+    const entity2 = container.resolve(Service);
+    expect(entity1).toBe(entity2);
+  });
 });
 
 describe('nested containers', () => {
