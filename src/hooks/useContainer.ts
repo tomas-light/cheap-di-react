@@ -39,9 +39,13 @@ function useContainer(logger: InternalLogger): HookResult {
     setContextValue({ container: new ReactContainer(parentContainer) });
   }, [parentContainer]);
 
+  const rerender = () => {
+    setContextValue({ ...contextValue });
+  };
+
   return [
     contextValue,
-    () => setContextValue({ ...contextValue }),
+    rerender,
   ];
 }
 

@@ -1,10 +1,16 @@
-import '@testing-library/jest-dom';
+import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { DependencyRegistrator, singleton } from 'cheap-di';
 import { stateful } from '../decorators';
 import { Provider } from './Provider';
 import { SelfOneTimeProvider } from './SelfOneTimeProvider';
 import { use } from '../hooks';
+
+test('use jsdom in this test file', () => {
+  const element = document.createElement('div');
+  expect(element).not.toBeNull();
+});
 
 describe('base cases', () => {
   abstract class Logger {
@@ -159,7 +165,7 @@ describe('base cases', () => {
 });
 
 describe('singleton and stateful', () => {
-  test('singleton', async done => {
+  test('singleton', async () => {
     @singleton
     class MySingleton {
       data: string = 'initial';
@@ -225,11 +231,9 @@ describe('singleton and stateful', () => {
 
     expect(queryAllByText('initial').length).toBe(0);
     expect(queryAllByText('loaded data').length).toBe(2);
-
-    done();
   });
 
-  test('stateful', async done => {
+  test('stateful', async () => {
     @stateful
     class MyStateful {
       message: string = 'initial';
@@ -313,11 +317,9 @@ describe('singleton and stateful', () => {
     expect(queryAllByText('initial').length).toBe(0);
     expect(queryAllByText(firstMessage).length).toBe(1);
     expect(queryAllByText(secondMessage).length).toBe(1);
-
-    done();
   });
 
-  test('nested singletons', (done) => {
+  test('nested singletons', async () => {
     @singleton
     class Service1 {
       state: string = '123';
@@ -333,7 +335,7 @@ describe('singleton and stateful', () => {
       state: string = '789';
     }
 
-    const buttonId = 'my-button';
+    const buttonId = 'my-button-3';
 
     const TestComponent = () => {
       const s1 = use(Service1);
@@ -374,17 +376,15 @@ describe('singleton and stateful', () => {
     expect(queryByText('789')).toBeInTheDocument();
     expect(queryByText('000')).toBeNull();
 
-    fireEvent.click(getByTestId(buttonId));
+    await act(async () => {
+      fireEvent.click(getByTestId(buttonId));
+    });
     rerender(<Component/>);
 
-    setTimeout(() => {
-      expect(queryByText('123')).toBeInTheDocument();
-      expect(queryByText('456')).toBeInTheDocument();
-      expect(queryByText('789')).toBeNull();
-      expect(queryByText('000')).toBeInTheDocument();
-
-      done();
-    });
+    expect(queryByText('123')).toBeInTheDocument();
+    expect(queryByText('456')).toBeInTheDocument();
+    expect(queryByText('789')).toBeNull();
+    expect(queryByText('000')).toBeInTheDocument();
   });
 });
 
