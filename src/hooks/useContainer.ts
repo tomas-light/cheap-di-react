@@ -32,7 +32,7 @@ function useContainer(logger: InternalLogger): HookResult {
       return;
     }
 
-    // exceptional case: if by some of reasons parent container will be changed
+    // exceptional case: if by some reasons parent container will be changed
     // possible, unreachable case
 
     logger.log('RECREATE container');

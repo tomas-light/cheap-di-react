@@ -34,8 +34,6 @@ Use it in react
 import {
   Provider,
   OneTimeProvider,
-  SelfProvider,
-  SelfOneTimeProvider,
 } from 'cheap-di-react';
 import { Logger, ConsoleLogger } from './logger';
 
@@ -47,6 +45,8 @@ const RootComponent = () => {
         dependencies={[
           dr => dr.registerType(ConsoleLogger).as(Logger).with('my message'),
         ]}
+        // shortcut for dependencies={[ dr => dr.registerType(AnotherConsoleLogger) ]}
+        self={[AnotherConsoleLogger]}
       >
         <ComponentA/>
       </Provider>
@@ -56,24 +56,11 @@ const RootComponent = () => {
         dependencies={[
           dr => dr.registerType(ConsoleLogger).as(Logger).with('my message'),
         ]}
+        // will use initial self dependecies (it uses useMemo under hood)
+        self={[AnotherConsoleLogger]}
       >
         <ComponentA/>
       </OneTimeProvider>
-
-      {/* shortcut for <Provider dependencies={[ dr => dr.registerType(ConsoleLogger) ]}> ... </Provider> */}
-      <SelfProvider
-        // will update dependencies on each render
-        dependencies={[AnotherConsoleLogger]}
-      >
-        <ComponentB/>
-      </SelfProvider>
-
-      <SelfOneTimeProvider
-        // will use initial dependecies (it uses useMemo under hood)
-        dependencies={[AnotherConsoleLogger]}
-      >
-        <ComponentB/>
-      </SelfOneTimeProvider>
     </>
   );
 };
@@ -102,7 +89,7 @@ Provider tree, and for `@stateful` there will be created different instance per 
 
 `stateful`
 ```tsx
-import { SelfOneTimeProvider, use, stateful } from 'cheap-di-react';
+import { OneTimeProvider, use, stateful } from 'cheap-di-react';
 
 @stateful
 class MyStateful {
@@ -111,15 +98,15 @@ class MyStateful {
 
 const RootComponent = () => {
   return (
-    <SelfOneTimeProvider dependencies={[MyStateful]}>
+    <OneTimeProvider self={[MyStateful]}>
       <LoadComponent message="level 1"/>
       <ReadComponent/>
 
-      <SelfOneTimeProvider dependencies={[MyStateful]}>
+      <OneTimeProvider self={[MyStateful]}>
         <LoadComponent message="level 2"/>
         <ReadComponent/>
-      </SelfOneTimeProvider>
-    </SelfOneTimeProvider>
+      </OneTimeProvider>
+    </OneTimeProvider>
   );
 };
 
@@ -143,7 +130,7 @@ const ReadComponent = () => {
 `singleton`
 ```tsx
 import { singleton } from 'cheap-di';
-import { SelfOneTimeProvider, use } from 'cheap-di-react';
+import { OneTimeProvider, use } from 'cheap-di-react';
 
 @singleton
 class MySingleton {
@@ -156,9 +143,9 @@ class MySingleton {
 
 const RootComponent = () => {
   return (
-    <SelfOneTimeProvider dependencies={[MySingleton]}>
+    <OneTimeProvider self={[MySingleton]}>
       <Component/>
-    </SelfOneTimeProvider>
+    </OneTimeProvider>
   );
 };
 

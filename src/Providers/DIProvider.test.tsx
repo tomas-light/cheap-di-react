@@ -3,8 +3,8 @@ import { render, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DependencyRegistrator, singleton } from 'cheap-di';
 import { stateful } from '../decorators';
-import { Provider } from './Provider';
-import { SelfOneTimeProvider } from './SelfOneTimeProvider';
+import { DIProvider } from './DIProvider';
+import { DIOneTimeProvider } from './DIOneTimeProvider';
 import { use } from '../hooks';
 
 test('use jsdom in this test file', () => {
@@ -44,13 +44,13 @@ describe('base cases', () => {
     };
 
     const RootComponent = () => (
-      <Provider
+      <DIProvider
         dependencies={[
           dr => dr.registerType(SomeConsoleLogger),
         ]}
       >
         <Component/>
-      </Provider>
+      </DIProvider>
     );
 
     const { queryByText } = render(<RootComponent/>);
@@ -64,13 +64,13 @@ describe('base cases', () => {
     };
 
     const RootComponent = () => (
-      <Provider
+      <DIProvider
         dependencies={[
           dr => dr.registerType(ConsoleLogger).as(Logger),
         ]}
       >
         <Component/>
-      </Provider>
+      </DIProvider>
     );
 
     const { queryByText } = render(<RootComponent/>);
@@ -84,13 +84,13 @@ describe('base cases', () => {
     };
 
     const RootComponent = () => (
-      <Provider
+      <DIProvider
         dependencies={[
           dr => dr.registerType(ConsoleLogger).as(Logger).with('my message'),
         ]}
       >
         <Component/>
-      </Provider>
+      </DIProvider>
     );
 
     const { queryByText } = render(<RootComponent/>);
@@ -120,13 +120,13 @@ describe('base cases', () => {
     };
 
     const RootComponent = () => (
-      <Provider
+      <DIProvider
         dependencies={[
           dr => dr.registerInstance(new Database(entities)),
         ]}
       >
         <Component/>
-      </Provider>
+      </DIProvider>
     );
 
     const { queryByText } = render(<RootComponent/>);
@@ -141,21 +141,21 @@ describe('base cases', () => {
     };
 
     const RootComponent = () => (
-      <Provider
+      <DIProvider
         dependencies={[
           dr => dr.registerType(ConsoleLogger).as(Logger).with('my message'),
         ]}
       >
         <Component/>
 
-        <Provider
+        <DIProvider
           dependencies={[
             dr => dr.registerType(SomeConsoleLogger).as(Logger),
           ]}
         >
           <Component/>
-        </Provider>
-      </Provider>
+        </DIProvider>
+      </DIProvider>
     );
 
     const { queryByText } = render(<RootComponent/>);
@@ -181,13 +181,13 @@ describe('singleton and stateful', () => {
 
     const RootComponent = () => {
       return (
-        <Provider dependencies={dependencies}>
+        <DIProvider dependencies={dependencies}>
           <LoadComponent/>
 
-          <Provider dependencies={dependencies}>
+          <DIProvider dependencies={dependencies}>
             <ReadComponent/>
-          </Provider>
-        </Provider>
+          </DIProvider>
+        </DIProvider>
       );
     };
 
@@ -251,15 +251,15 @@ describe('singleton and stateful', () => {
 
     const RootComponent = () => {
       return (
-        <Provider dependencies={dependencies}>
+        <DIProvider dependencies={dependencies}>
           <LoadComponent message={firstMessage} buttonId={button1}/>
           <ReadComponent/>
 
-          <Provider dependencies={dependencies}>
+          <DIProvider dependencies={dependencies}>
             <LoadComponent message={secondMessage} buttonId={button2}/>
             <ReadComponent/>
-          </Provider>
-        </Provider>
+          </DIProvider>
+        </DIProvider>
       );
     };
 
@@ -360,13 +360,13 @@ describe('singleton and stateful', () => {
     };
 
     const Component = () => (
-      <SelfOneTimeProvider dependencies={[Service1]}>
-        <SelfOneTimeProvider dependencies={[Service2]}>
-          <SelfOneTimeProvider dependencies={[Service3]}>
+      <DIOneTimeProvider self={[Service1]}>
+        <DIOneTimeProvider self={[Service2]}>
+          <DIOneTimeProvider self={[Service3]}>
             <TestComponent/>
-          </SelfOneTimeProvider>
-        </SelfOneTimeProvider>
-      </SelfOneTimeProvider>
+          </DIOneTimeProvider>
+        </DIOneTimeProvider>
+      </DIOneTimeProvider>
     );
 
     const { rerender, getByTestId, queryByText } = render(<Component/>);

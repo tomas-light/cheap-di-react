@@ -1,4 +1,4 @@
-import { Constructor, DependencyRegistrator, isSingleton, } from 'cheap-di';
+import { Constructor, DependencyRegistrator, ImplementationType, isSingleton, } from 'cheap-di';
 import { FC, Fragment, memo, ReactNode, useEffect, useRef, useState } from 'react';
 import { isStateful } from '../decorators';
 
@@ -7,16 +7,21 @@ import { useContainer } from '../hooks';
 import { configureStateful } from '../hooks/configureStateful';
 import { InternalLogger } from '../utils';
 
-interface ProviderProps {
-  dependencies?: ((dependencyRegistrator: DependencyRegistrator) => void)[];
+type Dependency = (dependencyRegistrator: DependencyRegistrator) => void;
+type SelfDependency = ImplementationType<Object>;
+
+interface Props {
+  dependencies?: Dependency[];
+  self?: SelfDependency[];
   /** if it is provided, logging will be enabled */
   debugName?: string;
   children: ReactNode;
 }
 
-const Provider: FC<ProviderProps> = props => {
+const DIProvider: FC<Props> = props => {
   const {
     dependencies,
+    self,
     debugName,
     children,
   } = props;
@@ -28,7 +33,7 @@ const Provider: FC<ProviderProps> = props => {
   const container = contextValue.container;
 
   useEffect(() => {
-    if (!container || !dependencies) {
+    if (!container || !dependencies && !self) {
       return;
     }
 
@@ -36,7 +41,8 @@ const Provider: FC<ProviderProps> = props => {
     logger.log('dependency registrations');
 
     const singletonsSizeBeforeDependenciesUpdate = container?.getSingletons().size ?? 0;
-    dependencies.forEach(callback => callback(container));
+    dependencies?.forEach((dependency) => dependency(container));
+    self?.forEach(selfDependency => container.registerType(selfDependency));
 
     logger.log('singleton and stateful configurations');
 
@@ -72,7 +78,7 @@ const Provider: FC<ProviderProps> = props => {
     }
 
     setInitialized(true);
-  }, [container, dependencies]);
+  }, [container, dependencies, self]);
 
   useEffect(() => {
     return () => {
@@ -99,7 +105,7 @@ const Provider: FC<ProviderProps> = props => {
 
 const MemoizedChildren: FC<{ children: ReactNode }> = memo(({children}) => <Fragment>{children}</Fragment>);
 
-const memoizedComponent = memo(Provider) as FC<ProviderProps>;
-export { memoizedComponent as Provider };
-export type { ProviderProps };
+const memoizedComponent = memo(DIProvider) as FC<Props>;
+export { memoizedComponent as DIProvider };
+export type { Props as DIProviderProps };
 
