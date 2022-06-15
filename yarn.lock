@@ -1581,7 +1581,7 @@ __metadata:
     "@testing-library/react": "npm:13.3.0"
     "@types/jest": "npm:28.1.1"
     "@types/react": "npm:18.0.12"
-    cheap-di: "npm:3.2.5"
+    cheap-di: "npm:3.3.1"
     jest: "npm:28.1.1"
     jest-environment-jsdom: "npm:28.1.1"
     react: "npm:18.1.0"
@@ -1596,12 +1596,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"cheap-di@npm:3.2.5":
-  version: 3.2.5
-  resolution: "cheap-di@npm:3.2.5"
+"cheap-di@npm:3.3.1":
+  version: 3.3.1
+  resolution: "cheap-di@npm:3.3.1"
   dependencies:
     reflect-metadata: "npm:0.1.13"
-  checksum: 67f77809ac172e3d2796701c57aacd3fa65036308e7df2ed989687924ac00e136a01aa699578653ebd5a25b3118fed663260f099881b86fccb1d32456ad67e4f
+  checksum: ed8160d1568681669331f0de03b180031f48cace0dc2345db336d49bf53016a800dd9eb16ea0c363dc701be68b96a8c70c11c9e44209c6a1e57a3c46eee8cd48
   languageName: node
   linkType: hard
 
