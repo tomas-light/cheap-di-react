@@ -1581,7 +1581,7 @@ __metadata:
     "@testing-library/react": "npm:13.3.0"
     "@types/jest": "npm:28.1.1"
     "@types/react": "npm:18.0.12"
-    cheap-di: "npm:3.4.0"
+    cheap-di: "npm:3.4.2"
     jest: "npm:28.1.1"
     jest-environment-jsdom: "npm:28.1.1"
     react: "npm:17.0.2"
@@ -1590,18 +1590,18 @@ __metadata:
     tslib: "npm:2.4.0"
     typescript: "npm:4.7.3"
   peerDependencies:
-    cheap-di: ">= 3.4.0"
+    cheap-di: ">= 3.4.2"
     react: ">= 17.0.2"
     react-dom: ">= 17.0.2"
   languageName: unknown
   linkType: soft
 
-"cheap-di@npm:3.4.0":
-  version: 3.4.0
-  resolution: "cheap-di@npm:3.4.0"
+"cheap-di@npm:3.4.2":
+  version: 3.4.2
+  resolution: "cheap-di@npm:3.4.2"
   dependencies:
     reflect-metadata: "npm:0.1.13"
-  checksum: ccb570f9f246ed46d70cc733383f4ac89ecdb31017c2bba428d94919f26d8c3439f5eb29f163067571889db28b3d4f0e67da8d7613fd2b81a5d8dd9cb4cb8628
+  checksum: a0f2c6ccbf4743aa094f3e6881fb36f874bb740e09e5b36d36f3c353206d17e36c30e03bbf9ce9b61f5eea594a5b3991b57707ec54823e9335f74dff520fb798
   languageName: node
   linkType: hard
 

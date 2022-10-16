@@ -1,5 +1,10 @@
 # Changelog
 
+### 4.0.2
+
+Bugfixes:
+* fixed crash for calling of `this.parentContainer.findRootContainer();` in `ReactContainer`;
+
 ### 4.0.1
 
 Bugfixes:

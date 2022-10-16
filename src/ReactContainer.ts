@@ -5,7 +5,7 @@ export class ReactContainer extends ContainerImpl {
   private scope: 'local' | 'global';
   skipParentInstanceOnce: boolean;
 
-  constructor(public parentContainer?: ReactContainer) {
+  constructor(public parentContainer?: ContainerImpl) {
     super();
     this.rerender = () => undefined;
     this.scope = 'global';
@@ -75,7 +75,9 @@ export class ReactContainer extends ContainerImpl {
 
   private findRootContainer(): ReactContainer {
     if (this.parentContainer) {
-      return this.parentContainer.findRootContainer();
+      if (this.parentContainer instanceof ReactContainer) {
+        return this.parentContainer.findRootContainer();
+      }
     }
 
     return this;
