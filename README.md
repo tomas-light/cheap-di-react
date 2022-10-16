@@ -32,15 +32,15 @@ Use it in react
 `components.tsx`
 ```tsx
 import {
-  Provider,
-  OneTimeProvider,
+  DIProvider,
+  DIOneTimeProvider,
 } from 'cheap-di-react';
 import { Logger, ConsoleLogger } from './logger';
 
 const RootComponent = () => {
   return (
     <>
-      <Provider
+      <DIProvider
         // will update dependencies on each render
         dependencies={[
           dr => dr.registerType(ConsoleLogger).as(Logger).with('my message'),
@@ -49,9 +49,9 @@ const RootComponent = () => {
         self={[AnotherConsoleLogger]}
       >
         <ComponentA/>
-      </Provider>
+      </DIProvider>
 
-      <OneTimeProvider
+      <DIOneTimeProvider
         // will use initial dependecies (it uses useMemo under hood)
         dependencies={[
           dr => dr.registerType(ConsoleLogger).as(Logger).with('my message'),
@@ -60,7 +60,7 @@ const RootComponent = () => {
         self={[AnotherConsoleLogger]}
       >
         <ComponentA/>
-      </OneTimeProvider>
+      </DIOneTimeProvider>
     </>
   );
 };
@@ -77,143 +77,6 @@ const ComponentB = () => {
   logger.debug('bla-bla-bla');
 
   return 'my layout';
-};
-```
-
-If you mark your service as `@stateful` (or `@singleton`), Provider will create instance of the service and configures
-it fields (with Object.defineProperties), those fields changes (<b>reassign</b>) will trigger `Provider` rerender throw 
-`React.Context`, and service consumers will receive field update.
-
-Difference between `@singleton` and `@stateful` that for `@singleton` there will be created only one instance for entire 
-Provider tree, and for `@stateful` there will be created different instance per each Provider that register this type.
-
-`stateful`
-```tsx
-import { OneTimeProvider, use, stateful } from 'cheap-di-react';
-
-@stateful
-class MyStateful {
-  message: string = 'initial';
-}
-
-const RootComponent = () => {
-  return (
-    <OneTimeProvider self={[MyStateful]}>
-      <LoadComponent message="level 1"/>
-      <ReadComponent/>
-
-      <OneTimeProvider self={[MyStateful]}>
-        <LoadComponent message="level 2"/>
-        <ReadComponent/>
-      </OneTimeProvider>
-    </OneTimeProvider>
-  );
-};
-
-const LoadComponent = ({ message }: { message: string }) => {
-  const myStateful = use(MyStateful);
-  return (
-    <button onClick={() => { myStateful.message = message; }}/>
-  );
-};
-
-const ReadComponent = () => {
-  const myStateful = use(MyStateful);
-  return (
-    <span>
-      {myStateful.message}
-    </span>
-  );
-};
-```
-
-`singleton`
-```tsx
-import { singleton } from 'cheap-di';
-import { OneTimeProvider, use } from 'cheap-di-react';
-
-@singleton
-class MySingleton {
-  data: string[] = ['initial'];
-
-  async loadData() {
-    this.data = await Promise.resolve(['some']);
-  }
-}
-
-const RootComponent = () => {
-  return (
-    <OneTimeProvider self={[MySingleton]}>
-      <Component/>
-    </OneTimeProvider>
-  );
-};
-
-const Component = () => {
-  const mySingleton = use(MySingleton);
-
-  useEffect(() => {
-    (async () => {
-      await mySingleton.loadData();
-    })();
-  }, []);
-
-  return (
-    <div>
-      {mySingleton.data.map(text => (
-        <span key={text} style={{ color: 'blue' }}>
-        {text}
-      </span>
-      ))}
-    </div>
-  );
-};
-```
-
-You can configure your services with more classic-way - when your class know nothing about how and where it will be
-used. 
-
-`stateful`
-```tsx
-import { OneTimeProvider, use } from 'cheap-di-react';
-
-class MyStateful {
-  message: string = 'initial';
-}
-
-const RootComponent = () => {
-  return (
-    <OneTimeProvider dependencies={[ dr => dr.registerType(MyStateful) ]}>
-      <LoadComponent message="level 1"/>
-      <ReadComponent/>
-
-      <OneTimeProvider dependencies={[ dr => dr.registerType(MyStateful) ]}>
-        <LoadComponent message="level 2"/>
-        <ReadComponent/>
-      </OneTimeProvider>
-    </OneTimeProvider>
-  );
-};
-```
-
-`singleton`
-```tsx
-import { OneTimeProvider, use } from 'cheap-di-react';
-
-class MySingleton {
-  data: string[] = ['initial'];
-
-  async loadData() {
-    this.data = await Promise.resolve(['some']);
-  }
-}
-
-const RootComponent = () => {
-  return (
-    <OneTimeProvider dependencies={[ dr => dr.registerType(MySingleton).asSingleton() ]}>
-      <Component/>
-    </OneTimeProvider>
-  );
 };
 ```
 

@@ -1,2 +1,2 @@
-export * from './useContainer';
+export * from './useDiContext';
 export * from './use';

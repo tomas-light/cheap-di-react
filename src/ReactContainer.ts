@@ -1,13 +1,4 @@
-import {
-  AbstractConstructor,
-  Constructor,
-  ContainerImpl,
-  ImplementationType,
-  ImplementationTypeWithInjection,
-  RegistrationType,
-} from 'cheap-di';
-import { isStateful, stateful } from './decorators';
-import { removeStateful } from './decorators/stateful';
+import { AbstractConstructor, Constructor, ContainerImpl, ImplementationTypeWithInjection, } from 'cheap-di';
 
 export class ReactContainer extends ContainerImpl {
   rerender: () => void;
@@ -19,22 +10,6 @@ export class ReactContainer extends ContainerImpl {
     this.rerender = () => undefined;
     this.scope = 'global';
     this.skipParentInstanceOnce = false;
-  }
-
-  registerType<TInstance>(implementationType: ImplementationType<TInstance>) {
-    if (!isStateful(implementationType)) {
-      stateful(implementationType);
-    }
-
-    const registration = super.registerType(implementationType);
-    const superAsSingleton = registration.asSingleton;
-
-    registration.asSingleton = <TBase_1 extends Partial<TInstance>>(type?: RegistrationType<TBase_1>) => {
-      removeStateful(implementationType);
-      return superAsSingleton(type);
-    };
-
-    return registration;
   }
 
   get rootContainer() {

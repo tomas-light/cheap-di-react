@@ -2,7 +2,6 @@ import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DependencyRegistrator, singleton } from 'cheap-di';
-import { stateful } from '../decorators';
 import { DIProvider } from './DIProvider';
 import { DIOneTimeProvider } from './DIOneTimeProvider';
 import { use } from '../hooks';
@@ -231,92 +230,6 @@ describe('singleton and stateful', () => {
 
     expect(queryAllByText('initial').length).toBe(0);
     expect(queryAllByText('loaded data').length).toBe(2);
-  });
-
-  test('stateful', async () => {
-    @stateful
-    class MyStateful {
-      message: string = 'initial';
-    }
-
-    const dependencies: ((dr: DependencyRegistrator) => void)[] = [
-      dr => dr.registerType(MyStateful),
-    ];
-
-    const firstMessage = 'level 1';
-    const secondMessage = 'level 2';
-
-    const button1 = 'my-button-1';
-    const button2 = 'my-button-2';
-
-    const RootComponent = () => {
-      return (
-        <DIProvider dependencies={dependencies}>
-          <LoadComponent message={firstMessage} buttonId={button1}/>
-          <ReadComponent/>
-
-          <DIProvider dependencies={dependencies}>
-            <LoadComponent message={secondMessage} buttonId={button2}/>
-            <ReadComponent/>
-          </DIProvider>
-        </DIProvider>
-      );
-    };
-
-    const LoadComponent = ({ message, buttonId }: { message: string, buttonId: string }) => {
-      const myStateful = use(MyStateful);
-
-      return (
-        <div>
-          <button
-            data-testid={buttonId}
-            onClick={() => {
-              myStateful.message = message;
-            }}
-          />
-        </div>
-      );
-    };
-
-    const ReadComponent = () => {
-      const myStateful = use(MyStateful);
-
-      return (
-        <span>
-          {myStateful.message}
-        </span>
-      );
-    };
-
-    const { queryAllByText, getByTestId, rerender } = render(<RootComponent/>);
-
-    expect(queryAllByText('initial').length).toBe(2);
-    expect(queryAllByText(firstMessage).length).toBe(0);
-    expect(queryAllByText(secondMessage).length).toBe(0);
-
-    // first state
-
-    await act(async () => {
-      fireEvent.click(getByTestId(button1));
-    });
-
-    rerender(<RootComponent/>);
-
-    expect(queryAllByText('initial').length).toBe(1);
-    expect(queryAllByText(firstMessage).length).toBe(1);
-    expect(queryAllByText(secondMessage).length).toBe(0);
-
-    // second state
-
-    await act(async () => {
-      fireEvent.click(getByTestId(button2));
-    });
-
-    rerender(<RootComponent/>);
-
-    expect(queryAllByText('initial').length).toBe(0);
-    expect(queryAllByText(firstMessage).length).toBe(1);
-    expect(queryAllByText(secondMessage).length).toBe(1);
   });
 
   test('nested singletons', async () => {

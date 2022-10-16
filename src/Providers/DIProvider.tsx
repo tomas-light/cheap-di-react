@@ -1,10 +1,8 @@
-import { Constructor, DependencyRegistrator, ImplementationType, isSingleton, } from 'cheap-di';
+import { Constructor, Container, DependencyRegistrator, ImplementationType, isSingleton, } from 'cheap-di';
 import { FC, Fragment, memo, ReactNode, useEffect, useRef, useState } from 'react';
-import { isStateful } from '../decorators';
 
 import { DiContext } from '../DiContext';
-import { useContainer } from '../hooks';
-import { configureStateful } from '../hooks/configureStateful';
+import { useDiContext } from '../hooks';
 import { InternalLogger } from '../utils';
 
 type Dependency = (dependencyRegistrator: DependencyRegistrator) => void;
@@ -13,6 +11,7 @@ type SelfDependency = ImplementationType<Object>;
 interface Props {
   dependencies?: Dependency[];
   self?: SelfDependency[];
+  parentContainer?: Container;
   /** if it is provided, logging will be enabled */
   debugName?: string;
   children: ReactNode;
@@ -22,6 +21,7 @@ const DIProvider: FC<Props> = props => {
   const {
     dependencies,
     self,
+    parentContainer,
     debugName,
     children,
   } = props;
@@ -29,8 +29,8 @@ const DIProvider: FC<Props> = props => {
   const [logger] = useState(() => new InternalLogger(debugName));
   const [initialized, setInitialized] = useState(false);
   const timerRef = useRef<any>(null);
-  const [contextValue, rerender] = useContainer(logger);
-  const container = contextValue.container;
+  const diContext = useDiContext({ logger, parentContainer });
+  const container = diContext.container;
 
   useEffect(() => {
     if (!container || !dependencies && !self) {
@@ -54,19 +54,8 @@ const DIProvider: FC<Props> = props => {
 
       if (isSingleton(constructor as Constructor)) {
         logger.log('singleton', constructor, 'founded');
-
-        const instance = container.resolve(type);
-        configureStateful(instance, container.rootContainer.rerender, logger);
-      }
-
-      if (isStateful(constructor as Constructor)) {
-        logger.log('stateful', constructor, 'founded');
-
-        container.skipParentInstanceResolvingOnce(); // target instance should be instantiated from zero
-        const instance = container.resolve(type);
-
-        container.registerInstance(instance).as(type);
-        configureStateful(instance, rerender, logger);
+        // resolve type to get and register its instance
+        container.resolve(type);
       }
     }
 
@@ -95,7 +84,7 @@ const DIProvider: FC<Props> = props => {
   }
 
   return (
-    <DiContext.Provider value={contextValue}>
+    <DiContext.Provider value={diContext}>
       <MemoizedChildren>
         {children}
       </MemoizedChildren>

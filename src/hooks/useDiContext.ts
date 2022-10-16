@@ -1,23 +1,29 @@
+import { Container } from "cheap-di";
 import { useContext, useEffect, useState } from 'react';
 import { DiContext, DiContextType } from '../DiContext';
 import { ReactContainer } from '../ReactContainer';
 import { InternalLogger } from '../utils';
 
-type HookResult = [
-  DiContextType,
-  () => void,
-];
+type HookParams = {
+  logger?: InternalLogger;
+  /** will be used, if there is no parent Container in React Context */
+  parentContainer?: Container;
+}
 
-function useContainer(logger: InternalLogger): HookResult {
+function useDiContext(params: HookParams = {}) {
+  const { logger = console } = params;
+
   const parentContainer = useContext(DiContext).container as ReactContainer;
 
   const [contextValue, setContextValue] = useState<DiContextType>({ container: undefined });
 
   useEffect(() => {
+    const parent = parentContainer ?? params.parentContainer;
+
     if (!contextValue.container) {
-      if (parentContainer) {
+      if (parent) {
         logger.log('create container');
-        contextValue.container = new ReactContainer(parentContainer);
+        contextValue.container = new ReactContainer(parent);
       }
       else {
         logger.log('create root container');
@@ -28,7 +34,7 @@ function useContainer(logger: InternalLogger): HookResult {
       setContextValue({ container: contextValue.container });
     }
 
-    if (!parentContainer || contextValue.container.sameParent(parentContainer)) {
+    if (!parent || contextValue.container.sameParent(parent)) {
       return;
     }
 
@@ -36,17 +42,10 @@ function useContainer(logger: InternalLogger): HookResult {
     // possible, unreachable case
 
     logger.log('RECREATE container');
-    setContextValue({ container: new ReactContainer(parentContainer) });
-  }, [parentContainer]);
+    setContextValue({ container: new ReactContainer(parent) });
+  }, [parentContainer, params.parentContainer]);
 
-  const rerender = () => {
-    setContextValue({ ...contextValue });
-  };
-
-  return [
-    contextValue,
-    rerender,
-  ];
+  return contextValue;
 }
 
-export { useContainer };
+export { useDiContext };
