@@ -33,7 +33,8 @@ const DIProvider: FC<Props> = props => {
   const container = diContext.container;
 
   useEffect(() => {
-    if (!container || !dependencies && !self) {
+    const isAnyConfigurationPassed = dependencies || self || parentContainer;
+    if (!container || !isAnyConfigurationPassed) {
       return;
     }
 

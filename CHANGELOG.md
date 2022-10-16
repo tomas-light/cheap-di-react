@@ -1,5 +1,10 @@
 # Changelog
 
+### 4.0.1
+
+Bugfixes:
+* if `dependencies` is not provided, but provided `parentContainer`, we assume that Provider is configured;
+
 ### 4.0.0
 
 BREAKING CHANGES:
