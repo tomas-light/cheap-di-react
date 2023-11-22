@@ -1,7 +1,7 @@
 # cheap-di-react
 
 > [!WARNING]  
-> The code is move under [cheap-di](https://github.com/tomas-light/cheap-di) package
+> The code was moved under [cheap-di](https://github.com/tomas-light/cheap-di/tree/release/4.0.0/packages) mono-repository. Please look there for actual versions
 
 Integration of cheap-di into React via React.context
 
