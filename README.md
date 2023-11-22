@@ -1,4 +1,8 @@
 # cheap-di-react
+
+> [!WARNING]  
+> The code is move under [cheap-di](https://github.com/tomas-light/cheap-di) package
+
 Integration of cheap-di into React via React.context
 
 ## How to use
